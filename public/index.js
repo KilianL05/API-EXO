@@ -71,7 +71,7 @@ async function renderChapters(cours) {
 
     const coursContainer = document.getElementById('cours');
     if (!cours || cours === []) {
-        coursContainer.innerHTML = '<h2>Aucun cours trouvé</h2>';
+        coursContainer.innerHTML = '<h2>Aucun chapitre trouvé</h2>';
     }
     const coursNodes = cours.map(cour => {
         const courNode = document.createElement('div');

@@ -1,5 +1,6 @@
 const api_url = 'http://localhost:3000/chapters';
 const form = document.querySelector('form');
+const chapters = await getAllChapters();
 
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -19,6 +20,32 @@ form.addEventListener('submit', async (e) => {
         await renderChapters();
     }
 })
+
+const searchInput = document.getElementById('search');
+
+console.log(searchInput);
+
+searchInput.addEventListener('change', async (e) => {
+    console.log('searching');
+    const searchTerm = e.target.value;
+    console.log(searchTerm);
+    await searchChapters(searchTerm);
+});
+
+async function searchChapters(name) {
+    if (name === "" || name == null) {
+        await renderChapters(chapters);
+    }
+    try {
+        const response = await fetch(`${api_url}/search/${name}`);
+        const result = await response.json();
+        await renderChapters(result.data);
+    } catch (error) {
+        console.error('Error searching chapters:', error);
+    }
+}
+
+
 
 async function getAllChapters() {
     try {
@@ -40,11 +67,12 @@ function isValidForm(chapter) {
 }
 
 
+async function renderChapters(cours) {
 
-async function renderChapters() {
-    const cours = await getAllChapters();
-    if (!cours) return;
     const coursContainer = document.getElementById('cours');
+    if (!cours || cours === []) {
+        coursContainer.innerHTML = '<h2>Aucun cours trouvé</h2>';
+    }
     const coursNodes = cours.map(cour => {
         const courNode = document.createElement('div');
         courNode.classList.add('col-md-4', 'mb-4');
@@ -89,4 +117,4 @@ async function deleteChapter(id) {
     await renderChapters();
 }
 
-renderChapters();
+renderChapters(chapters);

@@ -7,7 +7,7 @@ module.exports.createChapters = async (req, res, next) => {
     if (!name || !numberLessons) {
         return res.status(400).json({success: false, error: 'Veuillez remplir tous les champs'});
     }
-    const ChaptersExist = await Chapters.findOne({name : name});
+    const ChaptersExist = await Chapters.findOne({name: name});
 
     if (ChaptersExist) {
         return res.status(400).json({success: false, error: 'Ce Chapitre existe déjà'});
@@ -41,7 +41,16 @@ module.exports.deleteChapters = async (req, res, next) => {
     const id = req.params.id;
     const data = await Chapters.findByIdAndDelete(id);
     if (!data) {
-        return res.status(200).json({success: true, message : "Chapitre supprimé"});
+        return res.status(200).json({success: true, message: "Chapitre supprimé"});
     }
+}
 
+module.exports.searchChapters = async (req, res, next) => {
+    const name = req.params.name;
+    try {
+        const data = await Chapters.find({name: {$regex: name, $options: 'i'}});
+        return res.status(200).json({success: true, data: data});
+    } catch (error) {
+        return res.status(500).json({success: false, error: 'Erreur lors de la recherche des chapitres'});
+    }
 }
